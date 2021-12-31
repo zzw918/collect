@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+      }
+      h2 {
+        margin-bottom: 30px;
+        text-align: center;
+      }
+      img {
+        width: 100%;
+      }
+      div.item-wrapper {
+        margin: 20px 40px;
+      }
+      input {
+        box-sizing: border-box;
+        width: 100%;
+        height: 40px;
+        font-size: 20px;
+        padding-left: 10px;
+      }
+      .submit-btn {
+        margin: 40px 0;
+        height: 40px;
+        line-height: 40px;
+        background-color: rgb(18, 97, 255);
+        text-align: center;
+        font-size: 18px;
+        color: white;
+      }
+      #qrcode {
+        display: none;
+        width: 100%;
+        height: 200px;
+        margin-top: 20px;
+        text-align: center;
+      }
+      #qrcode img {
+        width: 70%;
+        display: inline !important;
+      }
+    </style>
+    <script
+      type="text/javascript"
+      src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"
+    ></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/qrcodejs/1.0.0/qrcode.js"></script>
+  </head>
+  <body>
+    <img
+      src="https://asset.eqh5.com/o_1dq3mp5cc1n51uv51r6rsidfm3d.png?imageMogr2/auto-orient/strip/thumbnail/640x332/format/webp|imageMogr2/auto-orient/strip/format/webp"
+      alt=""
+    />
+    <h2>疫情信息收集</h2>
+    <div id="info">
+      <div class="item-wrapper">
+        <h3>姓名</h3>
+        <div>
+          <input id="name" />
+        </div>
+      </div>
+      <div class="item-wrapper">
+        <h3>手机</h3>
+        <div>
+          <input id="phone" />
+        </div>
+      </div>
+      <div class="item-wrapper">
+        <h3>身份证</h3>
+        <div>
+          <input id="idCard" />
+        </div>
+      </div>
+      <div class="item-wrapper">
+        <div class="submit-btn" onclick="submit()">提交</div>
+      </div>
+    </div>
+    <div id="qrcode"></div>
+    <script>
+      function submit() {
+        // 表单数据收集和二维码生成
+        var name = document.getElementById("name").value;
+        var phone = document.getElementById("phone").value;
+        var idCard = document.getElementById("idCard").value;
+        if (!name || !phone || !idCard) {
+          alert("信息填写不完整！");
+          return;
+        }
+
+        // info隐藏、qrcode展示
+        document.getElementById("info").style.display = "none";
+        document.getElementById("qrcode").style.display = "block";
+        var qrcode = new QRCode(document.getElementById("qrcode"), {
+          width: 200,
+          height: 200,
+        });
+        var url = `https://www.baidu.com/?name=${name}&phone=${phone}&idCard=${idCard}`;
+        qrcode.makeCode(url);
+      }
+    </script>
+  </body>
+</html>
