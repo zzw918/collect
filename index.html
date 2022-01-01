@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>疫情信息收集</title>
     <style>
       html,
       body {
@@ -48,14 +48,18 @@
         width: 70%;
         display: inline !important;
       }
+      #avatar {
+        width: 100px;
+      }
     </style>
     <script
       type="text/javascript"
       src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"
     ></script>
     <script src="https://cdn.bootcdn.net/ajax/libs/qrcodejs/1.0.0/qrcode.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/@byteinspire/js-sdk@0.4.2/dist/inspirecloud-0.4.2.min.js"></script>
   </head>
-  <body>
+  <div>
     <img
       src="https://asset.eqh5.com/o_1dq3mp5cc1n51uv51r6rsidfm3d.png?imageMogr2/auto-orient/strip/thumbnail/640x332/format/webp|imageMogr2/auto-orient/strip/format/webp"
       alt=""
@@ -85,6 +89,16 @@
       </div>
     </div>
     <div id="qrcode"></div>
+    <div>
+      nickname：<span id="nickname"></span>
+    </div>
+    <div>
+      头像：<img id="avatar" />
+    </div>
+    <div>
+      openid: <span id="openId"></span>
+    </div>
+    <div id="userinfo"></div>
     <script>
       function submit() {
         // 表单数据收集和二维码生成
@@ -103,9 +117,39 @@
           width: 200,
           height: 200,
         });
-        var url = `https://www.baidu.com/?name=${name}&phone=${phone}&idCard=${idCard}`;
+        var url = `http://tjwf.fanmukeji.cn?name=${name}&phone=${phone}&idCard=${idCard}`;
         qrcode.makeCode(url);
       }
+    </script>
+    <script>
+      // 创建轻服务实例
+      const inspirecloud = new InspireCloud({
+        serviceId: 'qc4977'
+      });
+
+      // 微信授权
+      const noCode = location.href.indexOf('code=') === -1;
+      function showData(data) {
+        document.getElementById('userinfo').innerText = typeof data === 'string' ? data : JSON.stringify(data);
+      }
+      if (noCode) {
+        const appId = 'wx2e96ecfe1001dacd';
+        const redirectUrl = encodeURIComponent('https://tj-collect.web.cloudendpoint.cn');
+        const scope = 'snsapi_userinfo';
+        const authUrl = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appId}&redirect_uri=${redirectUrl}&response_type=code&scope=${scope}&state=wayne#wechat_redirect`;
+        location.href = authUrl;
+      } else {
+        const code = window.location.search.slice(1).split('&')[0].slice('5');
+        fetch(`https://qc4977.api.cloudendpoint.cn/getUserInfo?code=${code}`)
+          .then(data => data.json())
+          .then(data => {
+            document.getElementById('nickname').innerText = data.data.nickname;
+            document.getElementById('avatar').setAttribute('src', data.data.headimgurl);
+            document.getElementById('openId').innerText = data.data.openid;
+            showData(data.data)
+          })
+      }
+
     </script>
   </body>
 </html>
